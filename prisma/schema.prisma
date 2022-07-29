@@ -1,0 +1,28 @@
+datasource db {
+    provider = "sqlite"
+    url      = "file:../dev.db"
+}
+
+generator client {
+    provider = "cargo prisma"
+    output   = "../src/db.rs"
+}
+
+model User {
+    user_id  String @id 
+    username String
+    name    String
+    verified String
+    status String
+    changes Change[]
+}
+
+
+model Change {
+    id Int @id @default(autoincrement())
+    change_type String
+
+    user User @relation(fields: [user_id], references: [user_id])
+    user_id String
+    date String
+}
