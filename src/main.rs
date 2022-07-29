@@ -20,8 +20,6 @@ pub async fn main() {
 
     let users: Vec<user::Data> = client.user().find_many(vec![]).exec().await.unwrap();
 
-    // let list_of_people_that_unfollowed: Vec<&user::Data>;
-
     match follower_list_response {
         Ok(list) => {
             let list_of_new_followers = are_you_a_new_follower(&users, &list);
@@ -34,8 +32,6 @@ pub async fn main() {
         }
         Err(e) => panic!("Something went wrong"),
     };
-
-    // insert_into_change_table(list_of_people_that_unfollowed, ChangeType::Unfollowed).await;
 }
 
 fn are_you_a_new_follower<'a>(
@@ -99,16 +95,6 @@ async fn insert_into_change_table(user_list: Vec<&user::Data>, type_of_change: C
 
     let client = new_client().await.unwrap();
     for user in user_list {
-        // client
-        //     .user()
-        //     .find_unique(user::user_id::equals(user.user_id.clone()))
-        //     .update(vec![user::status::set(match type_of_change {
-        //         ChangeType::Followed => "following".to_string(),
-        //         ChangeType::Unfollowed => "shady".to_string(),
-        //     })])
-        //     .exec()
-        //     .await;
-
         let upsert_into_users = client
             .user()
             .upsert(
@@ -149,10 +135,6 @@ async fn insert_into_change_table(user_list: Vec<&user::Data>, type_of_change: C
 // #[tokio::main]
 async fn get_twitter_followers() -> Result<Vec<user::Data>, Box<dyn Error>> {
     let token = env::var("TWITTER_TRACKER_BEARER_TOKEN");
-
-    // for (key, value) in env::vars() {
-    //     println!("{key}: {value}");
-    // }
 
     let mut user_vector: Vec<user::Data> = Vec::new();
     match token {
